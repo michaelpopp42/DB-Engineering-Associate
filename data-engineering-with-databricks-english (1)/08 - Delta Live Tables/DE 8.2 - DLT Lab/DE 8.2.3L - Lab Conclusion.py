@@ -31,7 +31,23 @@
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC SELECT * FROM ${da.db_name}.daily_patient_avg
+# MAGIC SELECT * FROM da_michaelpopp42_9347_dewd_dlt_lab_82.daily_patient_avg
+
+# COMMAND ----------
+
+dbutils.fs.ls('dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/dlt_lab_82/storage/tables/recordings_bronze/')
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC show DATABASES;
+# MAGIC 
+# MAGIC DESCRIBE DATABASE EXTENDED da_michaelpopp42_9347_dewd_dlt_lab_82;
+# MAGIC --SHOW TABLES;
+# MAGIC --SELECT * FROM recordings_bronze;
+# MAGIC --SELECT * FROM DELTA.`dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/dlt_lab_82/storage/tables/recordings_bronze/`;
+# MAGIC --DESCRIBE TABLE EXTENDED recordings_bronze;
+# MAGIC --DESCRIBE TABLE EXTENDED daily_patient_avg;
 
 # COMMAND ----------
 

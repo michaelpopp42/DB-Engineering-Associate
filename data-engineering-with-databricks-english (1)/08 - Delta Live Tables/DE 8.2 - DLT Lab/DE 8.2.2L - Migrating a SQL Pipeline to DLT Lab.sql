@@ -34,8 +34,8 @@
 -- COMMAND ----------
 
 -- TODO
-CREATE <FILL-IN>
-AS SELECT <FILL-IN>
+CREATE OR REFRESH STREAMING LIVE TABLE recordings_bronze 
+AS SELECT current_timestamp() AS receipt_time, input_file_name() AS source_file, *  
   FROM cloud_files("${source}", "json", map("cloudFiles.schemaHints", "time DOUBLE, mrn INTEGER"))
 
 -- COMMAND ----------
@@ -59,9 +59,9 @@ AS SELECT <FILL-IN>
 -- COMMAND ----------
 
 -- TODO
-CREATE <FILL-IN> pii
+CREATE OR REFRESH STREAMING LIVE TABLE pii
 AS SELECT *
-  FROM cloud_files("${datasets_path}/healthcare/patient", "csv", map(<FILL-IN>))
+  FROM cloud_files("${datasets_path}/healthcare/patient", "csv", map("cloudFiles.inferColumnTypes", "true", "header", "true"))
 
 -- COMMAND ----------
 
@@ -88,14 +88,17 @@ AS SELECT *
 
 -- TODO
 CREATE OR REFRESH STREAMING LIVE TABLE recordings_enriched
-  (<FILL-IN add a constraint to drop records when heartrate ! > 0>)
+  (CONSTRAINT posigive_heart_rate EXPECT (heartrate > 0 ) ON VIOLATION DROP ROW)
 AS SELECT 
-  CAST(<FILL-IN>) device_id, 
-  <FILL-IN mrn>, 
-  <FILL-IN heartrate>, 
-  CAST(FROM_UNIXTIME(DOUBLE(time), 'yyyy-MM-dd HH:mm:ss') AS TIMESTAMP) time 
-  FROM STREAM(live.recordings_bronze)
-  <FILL-IN specify an inner join with the pii table on the mrn field>
+  CAST(r.device_id AS INTEGER) device_id, 
+  CAST(r.mrn AS LONG) mrn, 
+  CAST(r.heartrate AS DOUBLE) heartrate,  
+  CAST(FROM_UNIXTIME(DOUBLE(r.time), 'yyyy-MM-dd HH:mm:ss') AS TIMESTAMP) time,
+  p.name
+  FROM STREAM(LIVE.recordings_bronze) r
+  INNER JOIN STREAM(LIVE.pii) p
+  ON p.mrn = r.mrn
+
 
 -- COMMAND ----------
 
@@ -116,9 +119,11 @@ AS SELECT
 -- COMMAND ----------
 
 -- TODO
-CREATE <FILL-IN> daily_patient_avg
-  COMMENT <FILL-IN insert comment here>
-AS SELECT <FILL-IN>
+CREATE OR REFRESH STREAMING LIVE TABLE daily_patient_avg
+  COMMENT 'Aggregates average recordings_enriched by mrn, name, and date'
+AS SELECT mrn, name, MEAN(heartrate) AS daily_patient_avg, CAST(time as DATE) date
+FROM STREAM(LIVE.recordings_enriched)
+GROUP BY mrn, name, CAST(time as DATE)
 
 -- COMMAND ----------
 

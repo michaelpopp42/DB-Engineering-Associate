@@ -239,8 +239,15 @@ for s in spark.streams.active:
 # COMMAND ----------
 
 # MAGIC %sql
+# MAGIC SHOW TABLES
+
+# COMMAND ----------
+
+# MAGIC %sql
 # MAGIC 
-# MAGIC DESCRIBE EXTENDED streaming_tmp_vw
+# MAGIC DESCRIBE EXTENDED streaming_tmp_vw;
+# MAGIC DESCRIBE EXTENDED device_counts_tmp_vw;
+# MAGIC SELECT * FROM device_counts_tmp_vw
 
 # COMMAND ----------
 

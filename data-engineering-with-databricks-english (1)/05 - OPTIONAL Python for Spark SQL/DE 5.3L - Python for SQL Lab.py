@@ -87,6 +87,7 @@ working_dir = f"dbfs:/user/{username}/dbacademy/{course}/5.3l"
 print(f"username:    {username}")
 print(f"db_name:     {db_name}")
 print(f"working_dir: {working_dir}")
+print(course)
 
 # COMMAND ----------
 
@@ -119,6 +120,11 @@ def create_database(course, reset=True):
     spark.sql(f"USE {db_name}")
     
 create_database(course)
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SHOW DATABASES
 
 # COMMAND ----------
 

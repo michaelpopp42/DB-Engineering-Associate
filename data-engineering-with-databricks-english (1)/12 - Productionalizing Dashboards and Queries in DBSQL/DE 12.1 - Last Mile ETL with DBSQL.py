@@ -51,6 +51,12 @@
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC USE da_michaelpopp42_9347_dewd;
+# MAGIC DESCRIBE DATABASE da_michaelpopp42_9347_dewd
+
+# COMMAND ----------
+
 # MAGIC %md <i18n value="5c6209ed-ee86-40bb-bbf9-8d9a8663f21c"/>
 # MAGIC 
 # MAGIC 

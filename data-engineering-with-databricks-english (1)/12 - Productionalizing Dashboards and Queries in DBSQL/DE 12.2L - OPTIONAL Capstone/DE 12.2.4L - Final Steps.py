@@ -39,8 +39,7 @@
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC -- TODO
-# MAGIC <FILL-IN>
+# MAGIC SELECt * FROM  recordings_enriched 
 
 # COMMAND ----------
 
@@ -69,18 +68,24 @@
 
 # COMMAND ----------
 
-# TODO
-# CREATE OR REFRESH STREAMING LIVE TABLE recordings_enriched
-#   (CONSTRAINT positive_heartrate EXPECT (heartrate > 0) ON VIOLATION DROP ROW)
-# AS SELECT 
-#   CAST(a.device_id AS INTEGER) device_id, 
-#   CAST(a.mrn AS LONG) mrn, 
-#   CAST(a.heartrate AS DOUBLE) heartrate, 
-#   CAST(from_unixtime(a.time, 'yyyy-MM-dd HH:mm:ss') AS TIMESTAMP) time,
-#   b.name
-#   FROM STREAM(live.recordings_bronze) a
-#   INNER JOIN STREAM(live.pii) b
-#   ON a.mrn = b.mrn
+# MAGIC %sql
+# MAGIC 
+# MAGIC MERGE INTO ${da.db_name}.recordings_enriched e 
+# MAGIC USING
+# MAGIC ( 
+# MAGIC    SELECT
+# MAGIC    CAST(a.device_id AS INTEGER) device_id, 
+# MAGIC    CAST(a.mrn AS LONG) mrn, 
+# MAGIC    CAST(ABS(a.heartrate) AS DOUBLE) heartrate, 
+# MAGIC    CAST(from_unixtime(a.time, 'yyyy-MM-dd HH:mm:ss') AS TIMESTAMP) time,
+# MAGIC    b.name
+# MAGIC    FROM ${da.db_name}.recordings_bronze a
+# MAGIC    INNER JOIN ${da.db_name}.pii b
+# MAGIC    ON a.mrn = b.mrn
+# MAGIC    WHERE heartrate <= 0 
+# MAGIC ) c
+# MAGIC ON c.mrn = e.mrn AND c.time = e.time
+# MAGIC WHEN NOT MATCHED THEN INSERT *
 
 # COMMAND ----------
 
@@ -93,8 +98,14 @@
 
 # COMMAND ----------
 
-# TODO
-<FILL-IN>
+# MAGIC %sql
+# MAGIC 
+# MAGIC SELECT count(*) FROM ${da.db_name}.recordings_enriched
+# MAGIC WHERE heartrate = 0
+
+# COMMAND ----------
+
+spark.sql(f"SELECT * FROM {DA.db_name}.recordings_enriched").count() == spark.sql(f"SELECT * FROM {DA.db_name}.recordings_bronze").count()
 
 # COMMAND ----------
 

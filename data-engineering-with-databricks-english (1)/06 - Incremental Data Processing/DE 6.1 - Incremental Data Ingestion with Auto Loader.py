@@ -87,11 +87,13 @@
 # COMMAND ----------
 
 dbutils.fs.ls('dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/tracker')
-dbutils.fs.ls('dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/database.db')
-dbutils.fs.ls('dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/_checkpoints/target_table')
+dbutils.fs.ls('dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/database.db/target_table')
+#dbutils.fs.ls('dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/_checkpoints/target_table')
 #dbutils.fs.ls('dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/_checkpoints/target_table/metadata')
-dbutils.fs.ls('dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/_checkpoints/target_table/sources/0')
+#dbutils.fs.ls('dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/_checkpoints/target_table/sources/0')
 #dbutils.fs.ls('dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/_checkpoints/target_table/commits')
+#dbutils.fs.ls('dbfs:/user/hive/michaelpopp42@gmail.com/data-engineering-with-databricks/_checkpoints/target_table/sources/0')
+
 
 # COMMAND ----------
 
@@ -167,7 +169,7 @@ block_until_stream_is_ready(query)
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC SELECT * FROM target_table
+# MAGIC SELECT count(*) FROM target_table
 
 # COMMAND ----------
 

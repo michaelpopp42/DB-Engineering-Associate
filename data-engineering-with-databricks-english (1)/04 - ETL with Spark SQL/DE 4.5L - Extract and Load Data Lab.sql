@@ -78,10 +78,19 @@ OPTIONS( path = '${da.paths.datasets}/ecommerce/raw/events-kafka/')
 -- COMMAND ----------
 
 DESCRIBE EXTENDED events_json;
+--SHOW TABLES;
 --DESCRIBE EXTENDED events_raw;
 DESCRIBE EXTENDED item_lookup
 --SELECt * FROM events_json;
 --SELECT COUNT(1) FROM events_json
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC 
+-- MAGIC dbutils.fs.ls("dbfs:/mnt/dbacademy-datasets/data-engineering-with-databricks/v02/ecommerce/raw/events-kafka")
+-- MAGIC 
+-- MAGIC display(dbutils.fs.ls("dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/database.db/events_raw"))
 
 -- COMMAND ----------
 

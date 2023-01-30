@@ -53,6 +53,10 @@ DA.data_factory.load()
 
 # COMMAND ----------
 
+dbutils.fs.ls("dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/cap_12/storage/system/events")
+
+# COMMAND ----------
+
 # MAGIC %md <i18n value="806818f8-e931-45ba-b86f-d65cdf76f215"/>
 # MAGIC 
 # MAGIC 
@@ -62,6 +66,15 @@ DA.data_factory.load()
 # COMMAND ----------
 
 DA.print_pipeline_config()
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from pii
+
+# COMMAND ----------
+
+dbutils.fs.ls('dbfs:/mnt/dbacademy-datasets/data-engineering-with-databricks/v02/healthcare/patient')
 
 # COMMAND ----------
 
@@ -168,6 +181,49 @@ DA.generate_register_dlt_event_metrics_sql()
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC CREATE TABLE IF NOT EXISTS da_michaelpopp42_9347_dewd_cap_12.dlt_events
+# MAGIC LOCATION 'dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/cap_12/storage/system/events';
+# MAGIC 
+# MAGIC CREATE VIEW IF NOT EXISTS da_michaelpopp42_9347_dewd_cap_12.dlt_success AS
+# MAGIC SELECT * FROM da_michaelpopp42_9347_dewd_cap_12.dlt_events
+# MAGIC WHERE details:flow_progress:metrics IS NOT NULL;
+# MAGIC 
+# MAGIC CREATE VIEW IF NOT EXISTS da_michaelpopp42_9347_dewd_cap_12.dlt_metrics AS
+# MAGIC SELECT timestamp, origin.flow_name, details 
+# MAGIC FROM da_michaelpopp42_9347_dewd_cap_12.dlt_success
+# MAGIC ORDER BY timestamp DESC;
+
+# COMMAND ----------
+
+dbutils.fs.ls("dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/cap_12/storage/system/events")
+
+dbutils.fs.ls("dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/cap_12/stream")
+
+dbutils.fs.ls("${datasets_path}/healthcare/patient
+
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECt count(*) FROM da_michaelpopp42_9347_dewd_cap_12.dlt_events;
+# MAGIC SELECt count(*) FROM da_michaelpopp42_9347_dewd_cap_12.dlt_success;
+# MAGIC SELECt details:flow_progress:metrics, * FROM da_michaelpopp42_9347_dewd_cap_12.dlt_metrics
+# MAGIC where flow_name = 'pii' ;
+# MAGIC 
+# MAGIC SELECT flow_name, timestamp, int(details:flow_progress:metrics:num_output_rows) num_output_rows
+# MAGIC FROM da_michaelpopp42_9347_dewd_cap_12.dlt_metrics
+# MAGIC where details:flow_progress:metrics:num_output_rows IS NOT NULL
+# MAGIC and flow_name = 'daily_patient_avg'
+# MAGIC ORDER BY timestamp ASC;
+# MAGIC 
+# MAGIC SELECT flow_name, count(*)
+# MAGIC FROM da_michaelpopp42_9347_dewd_cap_12.dlt_metrics
+# MAGIC where details:flow_progress:metrics:num_output_rows > 0
+# MAGIC GROUP BY flow_name;
+
+# COMMAND ----------
+
 # MAGIC %md <i18n value="e035ddc7-4af9-4e9c-81f8-530e8db7c504"/>
 # MAGIC 
 # MAGIC 
@@ -180,6 +236,16 @@ DA.generate_register_dlt_event_metrics_sql()
 # COMMAND ----------
 
 DA.generate_daily_patient_avg()
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT * FROM da_michaelpopp42_9347_dewd_cap_12.daily_patient_avg
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SHOW TABLES
 
 # COMMAND ----------
 
@@ -216,6 +282,27 @@ DA.generate_daily_patient_avg()
 # COMMAND ----------
 
 DA.generate_visualization_query()
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT flow_name, timestamp, int(details:flow_progress:metrics:num_output_rows) num_output_rows
+# MAGIC FROM da_michaelpopp42_9347_dewd_cap_12.dlt_metrics
+# MAGIC WHERE int(details:flow_progress:metrics:num_output_rows) > 0
+# MAGIC AND flow_name = 'recordings_enriched'
+# MAGIC ORDER BY timestamp DESC;
+# MAGIC 
+# MAGIC SELECT sum(int(details:flow_progress:metrics:num_output_rows)) total_num_output_rows
+# MAGIC FROM da_michaelpopp42_9347_dewd_cap_12.dlt_metrics
+# MAGIC WHERE int(details:flow_progress:metrics:num_output_rows) > 0
+# MAGIC AND flow_name = 'recordings_enriched';
+# MAGIC 
+# MAGIC SELECT count(*) FROM da_michaelpopp42_9347_dewd_cap_12.recordings_enriched
+# MAGIC 
+# MAGIC --SELECT flow_name, timestamp, details
+# MAGIC --FROM da_michaelpopp42_9347_dewd_cap_12.dlt_metrics
+# MAGIC --WHERE int(details:flow_progress:metrics:num_output_rows) > 0
+# MAGIC --ORDER BY timestamp DESC;
 
 # COMMAND ----------
 

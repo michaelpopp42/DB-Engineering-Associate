@@ -70,6 +70,10 @@
 
 # COMMAND ----------
 
+dbutils.fs.ls("dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/dlt_lab_82/stream/")
+
+# COMMAND ----------
+
 DA.data_factory.load()
 
 # COMMAND ----------
@@ -165,6 +169,29 @@ DA.validate_pipeline_config()
 # MAGIC 1. A typo exists in either **`recordings_parsed`** or **`recordings_bronze`**
 # MAGIC 
 # MAGIC The safest way to identify the culprit is to iteratively add table/view definitions back into your DAG starting from your initial ingestion tables. You can simply comment out later table/view definitions and uncomment these between runs.
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC 
+# MAGIC use ${da.db_name};
+# MAGIC SHOW TABLes;
+# MAGIC --SHOW Databases;
+# MAGIC DESCRIBE TABLE EXTENDED recordings_bronze;
+# MAGIC --SELECT * FROM pii;
+# MAGIC --SELECT * FROM recordings_bronze ORDER BY receipt_time DESC;
+# MAGIC --LECT * FROM daily_patient_avg
+
+# COMMAND ----------
+
+dbutils.fs.ls("dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/dlt_lab_82/storage")
+dbutils.fs.ls("dbfs:/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/dlt_lab_82/storage/system/events")
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC 
+# MAGIC select * from delta.`/mnt/dbacademy-users/michaelpopp42@gmail.com/data-engineering-with-databricks/dlt_lab_82/storage/system/events`
 
 # COMMAND ----------
 
